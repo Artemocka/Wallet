@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -68,6 +69,7 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
         val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
         val behavior = params.behavior as BottomSheetBehavior
         behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        behavior.addBottomSheetCallback(BottomSheetCallbackImpl())
         binding.list.layoutManager = when {
             columnCount <= 1 -> LinearLayoutManager(context)
             else -> GridLayoutManager(context, columnCount)
@@ -184,5 +186,23 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
             setTextColor(textColor)
             setText(R.string.save)
         }
+    }
+    private inner class BottomSheetCallbackImpl: BottomSheetBehavior.BottomSheetCallback(){
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            Log.e("","onStateChanged\t$newState")
+            if (newState == BottomSheetBehavior.STATE_HIDDEN){
+                binding.bottomSheetUnderlay.setOnClickListener(null)
+                binding.bottomSheetUnderlay.isClickable = false
+            }else{
+                binding.bottomSheetUnderlay.setOnClickListener{
+                    val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
+                    val behavior = params.behavior as BottomSheetBehavior
+                    behavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+            }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float)= Unit
+
     }
 }

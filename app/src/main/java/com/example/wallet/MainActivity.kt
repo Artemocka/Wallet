@@ -11,6 +11,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.WindowCompat
 import com.example.wallet.databinding.ActivityMainBinding
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.utilities.DynamicColor
 
 class MainActivity : AppCompatActivity() {
 

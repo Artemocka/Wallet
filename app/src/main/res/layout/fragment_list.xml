@@ -32,121 +32,131 @@
         android:tint="@color/white"
         />
 
-    <FrameLayout
-        android:id="@+id/bottom_sheet"
-        style="@style/Widget.Material3.BottomSheet"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/bottom_sheet_underlay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="40dp"
+        android:layout_height="match_parent"
         android:elevation="8dp"
-
-        app:behavior_draggable="true"
-        app:behavior_skipCollapsed="true"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         >
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/bottom_sheet"
+            style="@style/Widget.Material3.BottomSheet"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingStart="12dp"
-            tools:ignore="RtlSymmetry"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
+            android:paddingBottom="40dp"
+            app:behavior_draggable="true"
+            app:behavior_skipCollapsed="true"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             >
-
-            <EditText
-                android:id="@+id/card_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:inputType="number"
-                android:maxLength="16"
-                tools:text="1234567890123456"
-                />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingStart="12dp"
+                tools:ignore="RtlSymmetry"
                 >
 
                 <EditText
-                    android:id="@+id/expire_date"
+                    android:id="@+id/card_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    tools:text="12/23"
+                    android:inputType="number"
+                    android:maxLength="16"
+                    tools:text="1234567890123456"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <EditText
+                        android:id="@+id/expire_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        tools:text="12/23"
+
+                        />
+
+                    <EditText
+                        android:id="@+id/cvc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:digits="0123456789"
+                        android:maxLength="3"
+                        tools:text="111"
+
+                        />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/fullname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    tools:text="Иванов Иван Иванович"
 
                     />
 
                 <EditText
-                    android:id="@+id/cvc"
+                    android:id="@+id/bank_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:digits="0123456789"
-                    android:maxLength="3"
-                    tools:text="111"
+                    tools:text="Тинькофф"
 
                     />
-            </LinearLayout>
 
-            <EditText
-                android:id="@+id/fullname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                tools:text="Иванов Иван Иванович"
-
-                />
-
-            <EditText
-                android:id="@+id/bank_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                tools:text="Тинькофф"
-
-                />
-            <EditText
-                android:id="@+id/phone_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-
-                tools:text="+79151804244"
-
-                />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="end"
-                >
-                <ImageButton
-                    android:id="@+id/delete"
+                <EditText
+                    android:id="@+id/phone_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_delete"
-                    android:background="?selectableItemBackgroundBorderless"
-                    app:tint="?android:textColorPrimary"
+                    android:layout_margin="4dp"
+
+                    tools:text="+79151804244"
+
                     />
-                <Button
-                    android:id="@+id/save"
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:orientation="horizontal"
+                    >
 
-                    android:layout_marginEnd="16dp"
-                    android:text="@string/save"
-                    />
+                    <ImageButton
+                        android:id="@+id/delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="24dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_delete"
+                        app:tint="?android:textColorPrimary"
+                        />
+
+                    <Button
+                        android:id="@+id/save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginEnd="16dp"
+                        android:text="@string/save"
+                        />
+                </LinearLayout>
+
+
             </LinearLayout>
 
-
-        </LinearLayout>
-
-    </FrameLayout>
-
-
+        </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
