@@ -10,8 +10,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
 
-    app:cardCornerRadius="12dp"
     android:foreground="?selectableItemBackground"
+    app:cardCornerRadius="12dp"
     >
 
     <LinearLayout
@@ -27,9 +27,11 @@
             android:id="@+id/card_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:textAppearance="?attr/textAppearanceListItem"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             tools:text="1234567890123456"
+            android:textSize="16sp"
+
             />
 
         <LinearLayout
@@ -42,8 +44,10 @@
                 android:id="@+id/expire_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:textSize="16sp"
+
                 tools:text="12/23"
 
                 />
@@ -52,8 +56,10 @@
                 android:id="@+id/cvc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:textSize="16sp"
+
                 tools:text="111"
 
                 />
@@ -63,9 +69,12 @@
             android:id="@+id/bank_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:textAppearance="?attr/textAppearanceListItem"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
+
             tools:text="Тинькофф"
+
 
             />
 
@@ -73,9 +82,24 @@
             android:id="@+id/fullname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:textAppearance="?attr/textAppearanceListItem"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="16sp"
+
             tools:text="Иванов Иван Иванович"
+
+            />
+        <TextView
+            android:id="@+id/phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="16sp"
+
+            tools:text="+79151804244"
 
             />
     </LinearLayout>
@@ -91,10 +115,10 @@
             android:id="@+id/compact_card_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="1234567890123456"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textSize="16sp"
+            tools:text="1234567890123456"
 
             />
 
@@ -102,11 +126,11 @@
             android:id="@+id/compact_fullname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Иванов Иван Иванович"
-            android:layout_marginTop="4dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
             android:textSize="16sp"
+            tools:text="Иванов Иван Иванович"
 
 
             />

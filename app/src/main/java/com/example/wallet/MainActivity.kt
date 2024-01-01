@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DatabaseProviderWrap.createDao(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

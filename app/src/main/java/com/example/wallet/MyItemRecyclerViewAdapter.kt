@@ -23,7 +23,7 @@ class MyItemRecyclerViewAdapter(
     }
 
     override fun getItemId(position: Int): Long {
-        return currentList[position].cardNumber.hashCode().toLong()
+        return currentList[position].id.toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -70,6 +70,7 @@ class MyItemRecyclerViewAdapter(
                 expireDate.text = item.expireDate
                 cvc.text = item.cvc.toString()
                 bankName.text = item.bank
+                phoneNumber.text = item.phoneNumber
 
                 //comact view
                 compactCardNumber.text = item.cardNumber

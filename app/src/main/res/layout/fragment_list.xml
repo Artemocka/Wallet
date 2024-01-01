@@ -22,24 +22,34 @@
         tools:listitem="@layout/item_card"
         />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        android:tint="@color/white"
+        />
+
     <FrameLayout
         android:id="@+id/bottom_sheet"
+        style="@style/Widget.Material3.BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:paddingBottom="40dp"
+        android:elevation="8dp"
 
-
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        style="@style/Widget.Material3.BottomSheet"
-        app:behavior_skipCollapsed="true"
         app:behavior_draggable="true"
+        app:behavior_skipCollapsed="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         >
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical"
+            android:paddingStart="12dp"
             tools:ignore="RtlSymmetry"
             >
 
@@ -48,7 +58,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:textAppearance="?attr/textAppearanceListItem"
+                android:inputType="number"
+                android:maxLength="16"
                 tools:text="1234567890123456"
                 />
 
@@ -63,7 +74,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:textAppearance="?attr/textAppearanceListItem"
                     tools:text="12/23"
 
                     />
@@ -75,7 +85,6 @@
                     android:layout_margin="4dp"
                     android:digits="0123456789"
                     android:maxLength="3"
-                    android:textAppearance="?attr/textAppearanceListItem"
                     tools:text="111"
 
                     />
@@ -86,28 +95,58 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Иванов Иван Иванович"
 
                 />
+
             <EditText
                 android:id="@+id/bank_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:textAppearance="?attr/textAppearanceListItem"
                 tools:text="Тинькофф"
 
                 />
-
-
-            <Button
-                android:id="@+id/save"
+            <EditText
+                android:id="@+id/phone_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save"
+                android:layout_margin="4dp"
+
+                tools:text="+79151804244"
+
                 />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="end"
+                >
+                <ImageButton
+                    android:id="@+id/delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_delete"
+                    android:background="?selectableItemBackgroundBorderless"
+                    app:tint="?android:textColorPrimary"
+                    />
+                <Button
+                    android:id="@+id/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/save"
+                    />
+            </LinearLayout>
+
+
         </LinearLayout>
 
     </FrameLayout>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
