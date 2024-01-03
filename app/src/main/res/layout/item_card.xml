@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
+    style="@style/Widget.Material3.CardView.Filled"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -17,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:padding="4dp"
         android:visibility="gone"
         tools:visibility="visible"
         >
@@ -27,8 +29,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            tools:text="1234567890123456"
+            android:background="?selectableItemBackground"
+            android:fontFamily="monospace"
             android:textSize="16sp"
+            tools:text="1234567890123456"
 
             />
 
@@ -44,6 +48,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="4dp"
+                android:background="?selectableItemBackground"
+                android:fontFamily="monospace"
                 android:textSize="16sp"
 
                 tools:text="12/23"
@@ -56,6 +63,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:background="?selectableItemBackground"
+                android:fontFamily="monospace"
                 android:textSize="16sp"
 
                 tools:text="111"
@@ -63,12 +72,30 @@
                 />
         </LinearLayout>
 
+
+        <TextView
+            android:id="@+id/fullname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:background="?selectableItemBackground"
+            android:fontFamily="monospace"
+            android:textSize="16sp"
+
+            tools:text="Иванов Иван Иванович"
+
+            />
+
         <TextView
             android:id="@+id/bank_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:background="?selectableItemBackground"
+            android:fontFamily="monospace"
             android:textSize="16sp"
 
             tools:text="Тинькофф"
@@ -77,24 +104,14 @@
             />
 
         <TextView
-            android:id="@+id/fullname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:textSize="16sp"
-
-            tools:text="Иванов Иван Иванович"
-
-            />
-        <TextView
             android:id="@+id/phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
+            android:background="?selectableItemBackground"
+            android:fontFamily="monospace"
             android:textSize="16sp"
 
             tools:text="+79151804244"
@@ -107,6 +124,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:padding="4dp"
         >
 
         <TextView
@@ -115,6 +133,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:fontFamily="monospace"
             android:textSize="16sp"
             tools:text="1234567890123456"
 
@@ -127,6 +146,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
+            android:fontFamily="monospace"
             android:textSize="16sp"
             tools:text="Иванов Иван Иванович"
 

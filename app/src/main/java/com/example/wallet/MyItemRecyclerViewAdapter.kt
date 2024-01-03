@@ -1,16 +1,19 @@
 package com.example.wallet
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
 import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.cardview.widget.CardView
+import android.widget.TextView
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
-import com.example.wallet.placeholder.PlaceholderContent.PlaceholderItem
+import androidx.recyclerview.widget.RecyclerView
 import com.example.wallet.databinding.ItemCardBinding
-
 
 
 class MyItemRecyclerViewAdapter(
@@ -46,11 +49,22 @@ class MyItemRecyclerViewAdapter(
 
             true
         }
+        binding.cardNumber.copyOnClick()
+        binding.expireDate.copyOnClick()
+        binding.cvc.copyOnClick()
+        binding.fullname.copyOnClick()
+        binding.bankName.copyOnClick()
+        binding.phoneNumber.copyOnClick()
 
         return viewHolder
 
     }
+    private  fun TextView.copyOnClick(){
+       setOnClickListener {  val clipboard =context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
+           val clip: ClipData = ClipData.newPlainText("Expire date", text)
+           clipboard.setPrimaryClip(clip) }
+    }
     override fun onBindViewHolder(holder: MyItemRecyclerViewAdapter.ViewHolder, position: Int) {
         val item = currentList[position]
 
@@ -78,6 +92,10 @@ class MyItemRecyclerViewAdapter(
 
                 fullview.isVisible = !item.compact
                 compactView.isVisible = item.compact
+
+
+
+
 
             }
         }

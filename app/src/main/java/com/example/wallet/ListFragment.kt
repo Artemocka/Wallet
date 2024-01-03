@@ -64,10 +64,14 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
     ): View? {
 
 
+
+
+
+
         binding = FragmentListBinding.inflate(inflater, container, false)
 
-        val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
-        val behavior = params.behavior as BottomSheetBehavior
+       val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
+       val behavior = params.behavior as BottomSheetBehavior
         behavior.state = BottomSheetBehavior.STATE_HIDDEN
         behavior.addBottomSheetCallback(BottomSheetCallbackImpl())
         binding.list.layoutManager = when {
@@ -124,12 +128,46 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
 
 
     override fun onLongClick(item: CardItem) {
+
+    }
+
+    private fun reset() {
+        binding.save.run {
+            backgroundTintList = bg
+            setTextColor(textColor)
+            setText(R.string.save)
+        }
+    }
+    private inner class BottomSheetCallbackImpl: BottomSheetBehavior.BottomSheetCallback(){
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            Log.e("","onStateChanged\t$newState")
+            if (newState == BottomSheetBehavior.STATE_HIDDEN){
+                hideKeyboard()
+                binding.bottomSheetUnderlay.setOnClickListener(null)
+                binding.bottomSheetUnderlay.isClickable = false
+            }else if (newState == BottomSheetBehavior.STATE_DRAGGING){
+                hideKeyboard()
+            }
+            else{
+                binding.bottomSheetUnderlay.setOnClickListener{
+                    val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
+                    val behavior = params.behavior as BottomSheetBehavior
+                    behavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+            }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float)= Unit
+
+    }
+    private fun editBottomSheet(item: CardItemitem: CardItem){
         reset()
         val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
         val behavior = params.behavior as BottomSheetBehavior
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         var job: Job? = null
-//        binding.bottomSheet.
+
         binding.run {
             cardNumber.setText(item.cardNumber)
             cvc.setText(item.cvc.toString())
@@ -169,40 +207,17 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
 
 
                     behavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    val imm =
-                        root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                    imm?.hideSoftInputFromWindow(root.windowToken, 0)
+                    hideKeyboard()
                 } else {
                     DatabaseProviderWrap.cardDao.delete(item)
+                    hideKeyboard()
                 }
 
             }
         }
     }
-
-    private fun reset() {
-        binding.save.run {
-            backgroundTintList = bg
-            setTextColor(textColor)
-            setText(R.string.save)
-        }
-    }
-    private inner class BottomSheetCallbackImpl: BottomSheetBehavior.BottomSheetCallback(){
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-            Log.e("","onStateChanged\t$newState")
-            if (newState == BottomSheetBehavior.STATE_HIDDEN){
-                binding.bottomSheetUnderlay.setOnClickListener(null)
-                binding.bottomSheetUnderlay.isClickable = false
-            }else{
-                binding.bottomSheetUnderlay.setOnClickListener{
-                    val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
-                    val behavior = params.behavior as BottomSheetBehavior
-                    behavior.state = BottomSheetBehavior.STATE_HIDDEN
-                }
-            }
-        }
-
-        override fun onSlide(bottomSheet: View, slideOffset: Float)= Unit
-
+    private fun hideKeyboard() {
+        val imm =binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 }
