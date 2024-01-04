@@ -7,9 +7,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,13 +15,20 @@ import android.view.inputmethod.InputMethodManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat.Type
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wallet.databinding.FragmentListBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
@@ -33,11 +37,13 @@ import kotlinx.coroutines.launch
 class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
 
     private var columnCount = 1
-    val adapter = MyItemRecyclerViewAdapter()
+    private val adapter = com.example.wallet.MyItemRecyclerViewAdapter()
     private var bg: ColorStateList? = null
     private lateinit var textColor: ColorStateList
 
     private lateinit var binding: FragmentListBinding
+
+    val filter = MutableStateFlow<String>("")
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +53,24 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
         lifecycleScope.launch {
-            DatabaseProviderWrap.cardDao.getAll().collect {
+            combine(
+                DatabaseProviderWrap.cardDao.getAll(), filter
+            ) { list, query ->
+                if (query.isEmpty()) {
+                    Log.e("", "combine if $query")
+                    list
+                } else {
+                    Log.e("", "combine else $query")
+
+                    list.filter {
+                        it.phoneNumber.contains(
+                            query,
+                            true
+                        ) || it.fullname.contains(query, true) || it.bank.contains(query, true)
+                    }
+                }
+            }.collect {
+                Log.e("", "${it.size}")
                 adapter.submitList(it)
             }
         }
@@ -56,10 +79,70 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
 
         binding = FragmentListBinding.inflate(inflater, container, false)
+
+
+        binding.toolbar.setOnMenuItemClickListener {
+//            binding.toolbar.isVisible = false
+            binding.searchBar.root.isVisible = true
+            binding.toolbar.menu.findItem(R.id.app_bar_search).isVisible = false
+            binding.searchBar.searchEditText.requestFocus()
+            binding.searchBar.searchIcon.isVisible = false
+
+
+            val imm =
+                binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(binding.searchBar.searchEditText, 0)
+
+
+
+
+
+            true
+        }
+        binding.searchBar.cancelButton.setOnClickListener {
+            binding.toolbar.menu.findItem(R.id.app_bar_search).isVisible = true
+            binding.searchBar.searchEditText.clearFocus()
+            binding.searchBar.searchEditText.text.clear()
+            binding.searchBar.root.isVisible = false
+            binding.searchBar.searchIcon.isVisible = true
+            hideKeyboard()
+
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+
+
+            binding.toolbar.updatePaddingRelative(top = insets.getInsets(Type.statusBars() or Type.displayCutout()).top)
+
+            binding.fab.updateLayoutParams<MarginLayoutParams> {
+                bottomMargin = marginEnd + insets.getInsets(Type.navigationBars()).bottom
+            }
+            binding.bottomSheet.updatePaddingRelative(
+                bottom = if (insets.getInsets(Type.ime()).bottom == 0) {
+                    resources.getDimensionPixelSize(R.dimen.large)
+                } else {
+                    resources.getDimensionPixelSize(R.dimen.common)
+                }
+            )
+            binding.list.updatePaddingRelative(
+                bottom = binding.list.paddingTop + insets.getInsets(
+                    Type.navigationBars()
+                ).bottom
+            )
+
+
+            insets
+        }
+        binding.searchBar.searchEditText.addTextChangedListener {
+//            Log.e("","combine if ${it.toString()}")
+
+            lifecycleScope.launch {
+                filter.emit(it.toString())
+            }
+        }
 
         binding.fab.setOnClickListener {
             createBottomSheet()
@@ -86,26 +169,7 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
         binding.list.adapter = adapter
 
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
 
-            binding.fab.updateLayoutParams<MarginLayoutParams> {
-                bottomMargin = marginEnd + insets.getInsets(Type.navigationBars()).bottom
-            }
-            binding.bottomSheet.updatePaddingRelative(
-                bottom = if (insets.getInsets(Type.ime()).bottom == 0) {
-                    resources.getDimensionPixelSize(R.dimen.large)
-                } else {
-                    resources.getDimensionPixelSize(R.dimen.common)
-                }
-            )
-            binding.list.updatePaddingRelative(
-                bottom = binding.list.paddingTop + insets.getInsets(
-                    Type.navigationBars()
-                ).bottom
-            )
-
-            insets
-        }
 
 
 
@@ -120,7 +184,7 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
         // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            ListFragment().apply {
+            com.example.wallet.ListFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }
@@ -146,17 +210,23 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
         BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             Log.e("", "onStateChanged\t$newState")
-            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                hideKeyboard()
-                underlay.setOnClickListener(null)
-                underlay.isClickable = false
-            } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                hideKeyboard()
-            } else {
-                underlay.setOnClickListener {
-                    val behavior = bottomSheet.getBehavior()
+            when (newState) {
+                BottomSheetBehavior.STATE_HIDDEN -> {
+                    hideKeyboard()
+                    underlay.setOnClickListener(null)
+                    underlay.isClickable = false
+                }
 
-                    behavior.state = BottomSheetBehavior.STATE_HIDDEN
+                BottomSheetBehavior.STATE_DRAGGING -> {
+                    hideKeyboard()
+                }
+
+                else -> {
+                    underlay.setOnClickListener {
+                        val behavior = bottomSheet.getBehavior()
+
+                        behavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    }
                 }
             }
         }
@@ -179,24 +249,28 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
         }
 
         binding.save.setOnClickListener {
-
-
-            binding.run {
-                val newItem = CardItem(
-                    id = 0,
-                    cardNumber = cardNumber.text.toString(),
-                    fullname = fullname.text.toString(),
-                    expireDate = "${expireDate1.text.toString()}/${expireDate2.text.toString()}",
-                    cvc = cvc.text.toString().toInt(),
-                    bank = bankName.text.toString(),
-                    phoneNumber = phoneNumber.text.toString()
-
-                )
-                DatabaseProviderWrap.cardDao.insert(newItem)
-
-            }
-            behavior.state = BottomSheetBehavior.STATE_HIDDEN
             hideKeyboard()
+
+            lifecycleScope.launch {
+                delay(100)
+                binding.run {
+                    val newItem = com.example.wallet.CardItem(
+                        id = 0,
+                        cardNumber = cardNumber.text.toString(),
+                        fullname = fullname.text.toString(),
+                        expireDate = "${expireDate1.text.toString()}/${expireDate2.text.toString()}",
+                        cvc = cvc.text.toString().toInt(),
+                        bank = bankName.text.toString(),
+                        phoneNumber = phoneNumber.text.toString()
+
+                    )
+                    DatabaseProviderWrap.cardDao.insert(newItem)
+
+                }
+                binding.bankName.clearFocus()
+                behavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+
         }
         binding.cardNumber.requestFocus()
 
@@ -235,12 +309,12 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
 
 
                 val newItem = item.copy(
-                    cardNumber = cardNumber.text.toString(),
-                    fullname = fullname.text.toString(),
-                    expireDate = "${expireDate1.text.toString()}/${expireDate2.text.toString()}",
-                    cvc = cvc.text.toString().toInt(),
-                    bank = bankName.text.toString(),
-                    phoneNumber = phoneNumber.text.toString()
+                    cardNumber = cardNumber.text.toString().trim(),
+                    fullname = fullname.text.toString().trim(),
+                    expireDate = "${expireDate1.text}/${expireDate2.text}".trim(),
+                    cvc = cvc.text.toString().trim().toInt(),
+                    bank = bankName.text.toString().trim(),
+                    phoneNumber = phoneNumber.text.toString().trim()
                 )
 
                 DatabaseProviderWrap.cardDao.update(newItem)
@@ -271,7 +345,7 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
     }
 
     private fun showSelectBottomSheet(item: CardItem) {
-        var behavior = binding.included.standardBottomSheet.getBehavior()
+        val behavior = binding.included.standardBottomSheet.getBehavior()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         binding.included.copy.icon.setImageResource(R.drawable.ic_copy)
         binding.included.copy.title.setText(R.string.copy)
@@ -296,12 +370,12 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
 
 
             MaterialAlertDialogBuilder(it.context)
-                .setTitle("Удалить")
-                .setMessage("Вы действительно хотите удалить этот элемент?")
-                .setPositiveButton("Да") { dialog, _ ->
+                .setTitle(getString(R.string.alert_title))
+                .setMessage(getString(R.string.alert_description))
+                .setPositiveButton(getString(R.string.alert_confirm)) { dialog, _ ->
 //                    dialog.cancel()
                     DatabaseProviderWrap.cardDao.delete(item)
-                }.setNegativeButton("Отменить") { dialog, _ ->
+                }.setNegativeButton(getString(R.string.alert_cancel)) { dialog, _ ->
 //                    dialog.cancel()
                 }.create().show()
 //            DatabaseProviderWrap.cardDao.delete(item)
@@ -329,5 +403,6 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
         }
 
     }
+
 }
 

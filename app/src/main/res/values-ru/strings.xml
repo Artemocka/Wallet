@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wallet</string>
+    <string name="confirm">Да</string>
+    <string name="save">Сохранить</string>
+    <string name="edit">Изменить</string>
+    <string name="copy">Скопировать</string>
+    <string name="remove">Удалить</string>
+    <string name="bank_name">Навание банка</string>
+    <string name="phone_number">Телефон</string>
+    <string name="person_name">ФИО</string>
+    <string name="cvc">CVC</string>
+    <string name="expire_date2">ГГ</string>
+    <string name="expire_date1">ДД</string>
+    <string name="card_number">Номер карты</string>
+    <string name="search">Поиск</string>
+    <string name="alert_title">Удалить</string>
+    <string name="alert_description">Вы действительно хотите удалить этот элемент?</string>
+    <string name="alert_cancel">Отменить</string>
+    <string name="alert_confirm">Да</string>
+</resources>

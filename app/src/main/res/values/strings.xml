@@ -1,20 +1,22 @@
 <resources>
     <string name="app_name">Wallet</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
     <string name="confirm">Confirm</string>
     <string name="save">Save</string>
-    <string name="action">asd</string>
-    <string name="supporting_text">asd\n</string>
-    <string name="switch_label">asd\n</string>
-    <string name="title">asd\n</string>
     <string name="edit">Edit</string>
     <string name="copy">Copy</string>
     <string name="remove">Remove</string>
     <string name="bank_name">Bank Name</string>
     <string name="phone_number">Phone Number</string>
+    <string name="person_name">Person Name</string>
+    <string name="cvc">CVC</string>
+    <string name="expire_date2">YY</string>
+    <string name="expire_date1">DD</string>
+    <string name="card_number">Card number</string>
+    <string name="search">Search</string>
+    <string name="alert_title">Delete</string>
+    <string name="alert_description">Do you really want to delete this item?</string>
+    <string name="alert_cancel">Cancel</string>
+    <string name="alert_confirm">Yes</string>
 
 
 </resources>
