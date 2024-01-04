@@ -197,6 +197,8 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
             behavior.state = BottomSheetBehavior.STATE_HIDDEN
             hideKeyboard()
         }
+        binding.cardNumber.requestFocus()
+
 
     }
 
@@ -214,7 +216,6 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
         val behavior = binding.bottomSheet.getBehavior()
 
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
 
 
         binding.run {
@@ -249,7 +250,10 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
 
 
             }
+
         }
+        binding.cardNumber.requestFocus()
+
     }
 
 
