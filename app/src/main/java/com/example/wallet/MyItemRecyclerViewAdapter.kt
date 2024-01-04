@@ -60,7 +60,8 @@ class MyItemRecyclerViewAdapter(
 
     }
     private  fun TextView.copyOnClick(){
-       setOnClickListener {  val clipboard =context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+       setOnClickListener {
+           val clipboard =context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
            val clip: ClipData = ClipData.newPlainText("Expire date", text)
            clipboard.setPrimaryClip(clip) }

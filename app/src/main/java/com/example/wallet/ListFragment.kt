@@ -1,13 +1,10 @@
 package com.example.wallet
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.Insets
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,18 +15,15 @@ import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.inputmethod.InputMethodManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.getSystemService
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.example.wallet.databinding.FragmentListBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 /**
@@ -64,24 +58,33 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
     ): View? {
 
 
-
-
-
-
         binding = FragmentListBinding.inflate(inflater, container, false)
 
-       val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
-       val behavior = params.behavior as BottomSheetBehavior
+        binding.fab.setOnClickListener {
+            createBottomSheet()
+        }
+        setTextWatchers()
+
+
+        val behavior = binding.bottomSheet.getBehavior()
+        val select_bottom_sheet_behavior = binding.included.standardBottomSheet.getBehavior()
+
+
         behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        behavior.addBottomSheetCallback(BottomSheetCallbackImpl())
+        select_bottom_sheet_behavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        select_bottom_sheet_behavior.addBottomSheetCallback(BottomSheetCallbackImpl(binding.included.selectBottomSheetUnderlay))
+
+        behavior.addBottomSheetCallback(BottomSheetCallbackImpl(binding.bottomSheetUnderlay))
+
+
         binding.list.layoutManager = when {
             columnCount <= 1 -> LinearLayoutManager(context)
             else -> GridLayoutManager(context, columnCount)
         }
         binding.list.adapter = adapter
 
-        bg = binding.save.backgroundTintList!!
-        textColor = binding.save.textColors
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
 
             binding.fab.updateLayoutParams<MarginLayoutParams> {
@@ -93,6 +96,11 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
                 } else {
                     resources.getDimensionPixelSize(R.dimen.common)
                 }
+            )
+            binding.list.updatePaddingRelative(
+                bottom = binding.list.paddingTop + insets.getInsets(
+                    Type.navigationBars()
+                ).bottom
             )
 
             insets
@@ -128,96 +136,191 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
 
 
     override fun onLongClick(item: CardItem) {
+        showSelectBottomSheet(item)
 
     }
 
-    private fun reset() {
-        binding.save.run {
-            backgroundTintList = bg
-            setTextColor(textColor)
-            setText(R.string.save)
-        }
-    }
-    private inner class BottomSheetCallbackImpl: BottomSheetBehavior.BottomSheetCallback(){
+
+    private inner class BottomSheetCallbackImpl(private val underlay: View) :
+        BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            Log.e("","onStateChanged\t$newState")
-            if (newState == BottomSheetBehavior.STATE_HIDDEN){
+            Log.e("", "onStateChanged\t$newState")
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                 hideKeyboard()
-                binding.bottomSheetUnderlay.setOnClickListener(null)
-                binding.bottomSheetUnderlay.isClickable = false
-            }else if (newState == BottomSheetBehavior.STATE_DRAGGING){
+                underlay.setOnClickListener(null)
+                underlay.isClickable = false
+            } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                 hideKeyboard()
-            }
-            else{
-                binding.bottomSheetUnderlay.setOnClickListener{
-                    val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
-                    val behavior = params.behavior as BottomSheetBehavior
+            } else {
+                underlay.setOnClickListener {
+                    val behavior = bottomSheet.getBehavior()
+
                     behavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
         }
 
-        override fun onSlide(bottomSheet: View, slideOffset: Float)= Unit
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
 
     }
-    private fun editBottomSheet(item: CardItemitem: CardItem){
-        reset()
-        val params = binding.bottomSheet.layoutParams as CoordinatorLayout.LayoutParams
-        val behavior = params.behavior as BottomSheetBehavior
+
+    private fun createBottomSheet() {
+        val behavior = binding.bottomSheet.getBehavior()
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        binding.run {
+            cardNumber.text?.clear()
+            cvc.text?.clear()
+            expireDate1.text?.clear()
+            expireDate2.text?.clear()
+            fullname.text?.clear()
+            bankName.text?.clear()
+            phoneNumber.text?.clear()
+        }
+
+        binding.save.setOnClickListener {
+
+
+            binding.run {
+                val newItem = CardItem(
+                    id = 0,
+                    cardNumber = cardNumber.text.toString(),
+                    fullname = fullname.text.toString(),
+                    expireDate = "${expireDate1.text.toString()}/${expireDate2.text.toString()}",
+                    cvc = cvc.text.toString().toInt(),
+                    bank = bankName.text.toString(),
+                    phoneNumber = phoneNumber.text.toString()
+
+                )
+                DatabaseProviderWrap.cardDao.insert(newItem)
+
+            }
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
+            hideKeyboard()
+        }
+
+    }
+
+    private fun copyAllFields(item: CardItem) {
+        val clipboard =
+            this.context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val cardText =
+            "${item.cardNumber}\n${item.expireDate}\t${item.cvc}\n${item.fullname}\n${item.bank}\n${item.phoneNumber}"
+        val clip: ClipData = ClipData.newPlainText("Card", cardText)
+        clipboard.setPrimaryClip(clip)
+    }
+
+    private fun editBottomSheet(item: CardItem) {
+
+        val behavior = binding.bottomSheet.getBehavior()
+
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-        var job: Job? = null
+
 
         binding.run {
             cardNumber.setText(item.cardNumber)
             cvc.setText(item.cvc.toString())
-            expireDate.setText(item.expireDate)
+            expireDate1.setText(item.expireDate.subSequence(0..1))
+            expireDate2.setText(item.expireDate.subSequence(3..4))
             fullname.setText(item.fullname)
             bankName.setText(item.bank)
             phoneNumber.setText(item.phoneNumber)
 
 
-            binding.delete.setOnClickListener {
-                save.setText(R.string.confirm)
-                save.backgroundTintList = ColorStateList.valueOf(Color.RED)
-                save.setTextColor(Color.WHITE)
-                job?.cancel()
-                job = lifecycleScope.launch {
-                    delay(2000)
-                    reset()
-                    job = null
-                }
 
-
-            }
 
             binding.save.setOnClickListener {
 
-                if (job == null) {
-                    val newItem = item.copy(
-                        cardNumber = cardNumber.text.toString(),
-                        fullname = fullname.text.toString(),
-                        expireDate = expireDate.text.toString(),
-                        cvc = cvc.text.toString().toInt(),
-                        bank = bankName.text.toString(),
-                        phoneNumber = phoneNumber.text.toString()
-                    )
 
-                    DatabaseProviderWrap.cardDao.update(newItem)
+                val newItem = item.copy(
+                    cardNumber = cardNumber.text.toString(),
+                    fullname = fullname.text.toString(),
+                    expireDate = "${expireDate1.text.toString()}/${expireDate2.text.toString()}",
+                    cvc = cvc.text.toString().toInt(),
+                    bank = bankName.text.toString(),
+                    phoneNumber = phoneNumber.text.toString()
+                )
+
+                DatabaseProviderWrap.cardDao.update(newItem)
 
 
-                    behavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    hideKeyboard()
-                } else {
-                    DatabaseProviderWrap.cardDao.delete(item)
-                    hideKeyboard()
-                }
+                behavior.state = BottomSheetBehavior.STATE_HIDDEN
+                hideKeyboard()
+
 
             }
         }
     }
+
+
+    private fun View.getBehavior(): BottomSheetBehavior<View> {
+        val params = layoutParams as CoordinatorLayout.LayoutParams
+
+        return params.behavior as BottomSheetBehavior
+    }
+
     private fun hideKeyboard() {
-        val imm =binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val imm =
+            binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
+
+    private fun showSelectBottomSheet(item: CardItem) {
+        var behavior = binding.included.standardBottomSheet.getBehavior()
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        binding.included.copy.icon.setImageResource(R.drawable.ic_copy)
+        binding.included.copy.title.setText(R.string.copy)
+
+        binding.included.copy.root.setOnClickListener {
+            copyAllFields(item)
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        binding.included.edit.icon.setImageResource(R.drawable.ic_edit)
+        binding.included.edit.title.setText(R.string.edit)
+        binding.included.edit.root.setOnClickListener {
+            editBottomSheet(item)
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        binding.included.remove.icon.setImageResource(R.drawable.ic_delete)
+        binding.included.remove.title.setText(R.string.remove)
+        binding.included.remove.root.setOnClickListener {
+
+
+            MaterialAlertDialogBuilder(it.context)
+                .setTitle("Удалить")
+                .setMessage("Вы действительно хотите удалить этот элемент?")
+                .setPositiveButton("Да") { dialog, _ ->
+//                    dialog.cancel()
+                    DatabaseProviderWrap.cardDao.delete(item)
+                }.setNegativeButton("Отменить") { dialog, _ ->
+//                    dialog.cancel()
+                }.create().show()
+//            DatabaseProviderWrap.cardDao.delete(item)
+            behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
+
+    private fun setTextWatchers() {
+        binding.expireDate1.addTextChangedListener {
+            if (it?.length == 2)
+                binding.expireDate2.requestFocus()
+        }
+        binding.expireDate2.addTextChangedListener {
+            if (it?.length == 2)
+                binding.cvc.requestFocus()
+        }
+
+        binding.cvc.addTextChangedListener {
+            if (it?.length == 3)
+                binding.fullname.requestFocus()
+        }
+        binding.cardNumber.addTextChangedListener {
+            if (it?.length == 16)
+                binding.expireDate1.requestFocus()
+        }
+
+    }
 }
+

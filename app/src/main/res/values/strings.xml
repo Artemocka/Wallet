@@ -10,6 +10,11 @@
     <string name="supporting_text">asd\n</string>
     <string name="switch_label">asd\n</string>
     <string name="title">asd\n</string>
+    <string name="edit">Edit</string>
+    <string name="copy">Copy</string>
+    <string name="remove">Remove</string>
+    <string name="bank_name">Bank Name</string>
+    <string name="phone_number">Phone Number</string>
 
 
 </resources>

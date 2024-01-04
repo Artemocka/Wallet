@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/select_bottom_sheet_underlay"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:elevation="9dp"
+    >
+
+    <FrameLayout
+
+        android:id="@+id/standard_bottom_sheet"
+        style="@style/Widget.Material3.BottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="false"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+
+                android:paddingBottom="0dp"
+
+                />
+
+            <include
+                android:id="@+id/copy"
+                layout="@layout/item_option"
+                />
+
+            <include
+                android:id="@+id/edit"
+                layout="@layout/item_option"
+                />
+
+            <include
+                android:id="@+id/remove"
+                layout="@layout/item_option"
+                />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
