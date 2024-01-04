@@ -59,17 +59,18 @@ class MyItemRecyclerViewAdapter(
         return viewHolder
 
     }
-    private  fun TextView.copyOnClick(){
-       setOnClickListener {
-           val clipboard =context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
-           val clip: ClipData = ClipData.newPlainText("Expire date", text)
-           clipboard.setPrimaryClip(clip) }
+    private fun TextView.copyOnClick() {
+        setOnClickListener {
+            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+            val clip: ClipData = ClipData.newPlainText("Expire date", text)
+            clipboard.setPrimaryClip(clip)
+        }
     }
+
     override fun onBindViewHolder(holder: MyItemRecyclerViewAdapter.ViewHolder, position: Int) {
         val item = currentList[position]
-
-
         Log.e("", "onBindViewHolder   $position")
         holder.bind(item)
 
@@ -95,9 +96,6 @@ class MyItemRecyclerViewAdapter(
                 compactView.isVisible = item.compact
 
 
-
-
-
             }
         }
 
@@ -106,7 +104,7 @@ class MyItemRecyclerViewAdapter(
 
     interface CardItemListener {
         fun onClick(item: CardItem)
-        fun onLongClick(item:CardItem)
+        fun onLongClick(item: CardItem)
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -288,6 +289,8 @@ class ListFragment : Fragment(), MyItemRecyclerViewAdapter.CardItemListener {
         }
 
         binding.included.remove.icon.setImageResource(R.drawable.ic_delete)
+        binding.included.remove.icon.imageTintList = ColorStateList.valueOf(Color.RED)
+        binding.included.remove.title.setTextColor(Color.RED)
         binding.included.remove.title.setText(R.string.remove)
         binding.included.remove.root.setOnClickListener {
 
